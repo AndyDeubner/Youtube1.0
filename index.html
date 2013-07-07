@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Youtube Embedded Video</title> 
+        <link href="stylesheet/stylesheet.css" rel="stylesheet" type="text/css">
+        <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="js/jquery-1.10.1.min.js"></script>
+        <script type="text/javascript">
+
+            var params = {allowScriptAccess: "always"};
+            var atts = {id: "myytplayer"};
+            swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1",
+                    "tubePlayer", "425", "356", "8", null, null, params, atts);
+
+            var player;
+            function onYouTubePlayerReady(id) {
+                console.log("runs");
+                player = $("#myytplayer").get(0);
+            }
+
+            $(document).ready(function(e) {
+                var url = "http://gdata.youtube.com/feeds/api/videos?max-results=20&alt=json&q=cats";
+
+
+                var loadedData;
+
+                $.getJSON(url, function(data) {
+
+                    loadedData = data;
+
+                    $.each(data.feed.entry, function(key, value) {
+
+                        var nodeUrl = value.id.$t.replace("http://gdata.youtube.com/feeds/api/videos/", "")
+
+                        $("#res").append("<p data-url='" + nodeUrl + "' >" + value.title.$t + "</p>");
+
+                        $("p").on("click", function() {
+                            player.loadVideoById($(this).data("url"), 0, "default");
+                            //console.log( $(this).data("url") );
+                        });
+
+                    });
+
+                });
+
+            });
+
+        </script>
+    </head>
+    <body>
+
+        <div id="res"></div>
+        <div id="ytplayer"></div>
+
+        <script>
+            // Load the IFrame Player API code
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/player_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            // Replace the 'ytplayer' element with an <iframe> and
+            // YouTube player after the API code downloads.
+            var player;
+            function onYouTubePlayerAPIReady() {
+                player = new YT.Player('ytplayer', {
+                    height: '390',
+                    width: '640',
+                    videoId: ''
+                });
+            }
+        </script>
+</body>
+</html>
