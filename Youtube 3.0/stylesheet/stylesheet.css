@@ -1,0 +1,37 @@
+/* 
+    Document   : stylesheet
+    Created on : Jul 6, 2013, 4:02:30 PM
+    Author     : Will
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: block;
+}
+
+/*  */
+/* default all to 0 margin at top */
+* {
+    margin-top: 0px;
+}
+
+#res {
+    float: left;
+}
+
+#res p {
+    cursor: pointer;
+}
+
+#tubePlayer {
+    float: left;
+    width: 300px;
+}
+
+#moveList {
+    float: left;
+}
+
+
+
