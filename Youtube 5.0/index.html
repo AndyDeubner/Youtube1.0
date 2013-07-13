@@ -1,0 +1,100 @@
+<!--
+Partners:
+Name: Andy Deubner
+Will Bungolo
+Date: July 7, 2013
+Description: First class project!
+-->
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Youtube Embedded Video</title> 
+	<script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script type="text/javascript">
+    
+		var params = { allowScriptAccess: "always" };
+		var atts = { id: "myytplayer" };
+		swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1",
+					   "tubePlayer", "425", "356", "8", null, null, params, atts);
+
+		var player;
+		function onYouTubePlayerReady(id) {
+			console.log("runs");
+			player = $("#myytplayer").get(0);
+		}
+
+		$(document).ready(function(e) {
+           // var url = "http://gdata.youtube.com/feeds/api/videos?max-results=20&alt=json&q=dogs";
+			
+			
+			var loadedData;
+			
+			$.getJSON(url, function( data ) {
+				
+				loadedData = data;
+				
+				$.each( data.feed.entry, function( key, value ) {
+					
+					var nodeUrl = value.id.$t.replace("http://gdata.youtube.com/feeds/api/videos/", "")
+					
+					$("#res").append("<p data-url='" + nodeUrl + "' >" + value.title.$t + "</p>");
+					
+					$("p").on("click", function() {
+						player.loadVideoById( $(this).data("url"), 0, "default");
+						console.log( $(this).data("url") );	
+					});	
+				});
+			});	
+			<!-- Search box function -->	
+             $("#btnSearch").click(function() {
+	
+               //var url = "http://gdata.youtube.com/feeds/api/videos?max-results=20&alt=json&q=";
+			   
+			   var loadedData;
+
+               $.getJSON(url + $("#txtSearch").val(), function ( data ) {
+				    
+			    $("#res").html("");   
+           var loadedData;
+			
+			
+				
+				loadedData = data;
+				
+				$.each( data.feed.entry, function( key, value ) {
+					
+					var nodeUrl = value.id.$t.replace("http://gdata.youtube.com/feeds/api/videos/", "")
+					
+					$("#res").append("<p data-url='" + nodeUrl + "' >" + value.title.$t + "</p>");
+					
+					$("p").on("click", function() {
+						player.loadVideoById( $(this).data("url"), 0, "default");
+						//console.log( $(this).data("url") );
+               
+                        });
+                    });
+                });
+            });
+         });
+     
+  </script> 
+  <style>
+  	div { width: 300px; float: left; }
+	p { cursor: pointer;
+  </style>
+</head>
+<body>
+
+	<div id="res"></div>
+  <div id="tubePlayer">
+    You need Flash player 8+ and JavaScript enabled to view this video.
+  </div>
+   <div id="divA" class="col">
+      <input id="txtSearch" />
+      <input id="btnSearch" type="button" value="Search!" />
+        </div>
+
+</body>
+</html>
