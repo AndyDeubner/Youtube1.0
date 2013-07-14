@@ -1,0 +1,136 @@
+<!--
+Partners:
+Name: Andy Deubner
+      Will Bumbalough
+Date: July 14, 2013
+Description: First class project!
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Links to java and jquery stuff -->
+        <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <link rel="stylesheet" href="stylesheet/stylesheet.css" type="text/css">
+        <script type="text/javascript">
+         <!-- scripts for youtube -->
+            var params = {allowScriptAccess: "always"};
+            var atts = {id: "myytplayer"};
+            swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1",
+                    "tubePlayer", "550", "356", "8", null, null, params, atts);
+            var player;
+			<!-- Youtube player function -->
+            function onYouTubePlayerReady(id) {
+                player = $("#myytplayer").get(0);
+            }
+            <!-- load main list function -->
+            $(document).ready(function(e) {
+                var url = "http://gdata.youtube.com/feeds/api/videos?max-results=20&alt=json&q=dogs";
+
+
+                var loadedData;
+                <!-- retrieve JSON -->
+                $.getJSON(url, function(data) {
+
+                    loadedData = data;
+                    $.each(data.feed.entry, function(key, value) {
+
+                        var nodeUrl = value.id.$t.replace("http://gdata.youtube.com/feeds/api/videos/", "");
+                        <!--load playlist and have it play and also add to playlist -->
+                        $("#res").append("<p data-url='" + nodeUrl + "' >" + (key + 1) + ". " + value.title.$t + "  <span class='searchItems'><img src='includes/arrow.png' title='Add to Playlist' /><span></p>");
+
+                        <!-- click on play function -->
+                        $("p").on("click", function() {
+                            player.loadVideoById($(this).data("url"), 0, "default");
+                        });
+
+                         <!-- play list function -->
+                        $(".searchItems").click(function() {
+                            $("#divB").append("<li>" + "<p data-url='" + nodeUrl + "' >" + value.title.$t + "<span class='removeItems'> - </span></p>" + "</li>");
+                            <!-- playlist load video function -->
+                            $("p").on("click", function() {
+                                player.loadVideoById($(this).data("url"), 0, "default");
+                            });
+                            end();
+                        });
+                    });
+                });
+                <!-- search function-->
+                $("#btnSearch").click(function() {
+
+                    var url = "http://gdata.youtube.com/feeds/api/videos?max-results=20&alt=json&q=";
+
+                    var loadedData;
+                    //get JSON for searching
+                    $.getJSON(url + $("#txtSearch").val(), function(data) {
+
+                        $("#res").html("");
+
+                        var loadedData;
+
+                        loadedData = data;
+                        //retrieve data to make new main list for search
+                        $.each(data.feed.entry, function(key, value) {
+
+                            var nodeUrl = value.id.$t.replace("http://gdata.youtube.com/feeds/api/videos/", "");
+                            $("#res").append("<p data-url='" + nodeUrl + "' >" + (key + 1) + ". " + value.title.$t + "  <span class='searchItems'><img src='includes/arrow.png' title='Add to Playlist' /></span></p>");
+
+                            //click on play for new list
+                            $("p").on("click", function() {
+                                player.loadVideoById($(this).data("url"), 0, "default");
+                            });
+
+                            //search items function to display
+                            $(".searchItems").click(function() {
+                                $("#divB").append("<li>" + "<p data-url='" + nodeUrl + "' >" + value.title.$t + "<span class='removeItems'> - </span></p>" + "</li>");
+                 
+                                $("p").on("click", function() {
+                                    player.loadVideoById($(this).data("url"), 0, "default");
+                                });
+                                end();
+                            });
+                        });
+                    });
+                });
+            });
+        </script>
+        <title>This is a Template</title>
+    </head>
+    <body>
+        <div id="container">
+            <div id="header">
+                <div id="banner">
+                    <br>
+                    <h1>Custom YouTube playlist</h1>
+                    <div id="navBar">
+                        
+                    </div>
+                </div>
+            </div><!-- End of Header -->
+            <div id="mainPage">
+                <br>
+                <br>
+                &nbsp;
+                Add Videos from this 
+                <div class="res">
+                    <div id="res"></div>
+                </div>
+                <div id="tubePlayer">
+                    You need Flash player 8+ and JavaScript enabled to view this video.
+                </div>
+                <div id="divA">
+                    <input id="txtSearch" />
+                    <input id="btnSearch" type="button" value="Search!" />
+                </div>
+                <div id="playlist">
+                    <h2>Your Playlist</h2>
+                    <ol id="divB"></ol>
+                </div>
+            </div><!-- end of main page Content -->
+            <div id="footer">
+                &nbsp;
+            </div>
+        </div>
+    </body>
+</html>
